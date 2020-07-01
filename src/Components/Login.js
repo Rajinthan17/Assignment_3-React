@@ -71,8 +71,9 @@ const classes = makeStyles((theme) => ({
               console.log("password = " + this.state.password)
               localStorage.setItem('id', '1');
               localStorage.setItem('username', this.state.username);
-              localStorage.setItem('email', 'biru@gmail.com');
-              localStorage.setItem('roles', 'ROLE_ADMIN');
+              localStorage.setItem('email', 'Rajinthan@gmail.com');
+              localStorage.setItem('roles', 'ADMIN');
+              localStorage.setItem('isLogin', true);
               this.props.history.push("/profile");
               window.location.reload();
         } else {

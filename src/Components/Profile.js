@@ -5,7 +5,7 @@ import { Typography, Card, CardContent, Paper, Grid } from '@material-ui/core';
 const style = {
   root: {
     minWidth: 275,
-    backgroundColor:'#006064',
+    backgroundColor:'#263238',
     marginTop: 20,
     height: 400,
     color: '#e0f7fa'
@@ -47,27 +47,11 @@ export default class Profile extends Component {
                 <CardContent>
                   <Typography style={style.title} gutterBottom>
                     <h1>Profile : {currentUser.username}</h1>
+                    <p><strong>Token:</strong>{" "}{Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 10)}</p>
+                    <p><strong>Id:</strong>{" "}{currentUser.id}</p>
+                    <p><strong>Email:</strong>{" "}{currentUser.email}</p>
+                    <p><strong>Authorities:</strong>{" "}{currentUser.roles}</p>
                   </Typography>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                      <Paper style={style.paper} elevation={0}>
-                        <strong>Id:</strong>{" "}
-                        {currentUser.id}
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Paper style={style.paper} elevation={0}>
-                        <strong>Email:</strong>{" "}
-                        {currentUser.email}
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Paper style={style.paper} elevation={0}>
-                        <strong>Authorities:</strong>
-                        {currentUser.roles}
-                      </Paper>
-                    </Grid>
-                  </Grid>
                 </CardContent>
               </Card>
             </Paper>

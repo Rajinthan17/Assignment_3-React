@@ -12,6 +12,7 @@ import Signup from './Signup';
 import Login from './Login';
 import Profile from './Profile';
 import AddBook from './AddBook';
+import BookList from './BookList';
 
 
 
@@ -69,6 +70,7 @@ function NavBar(props){
               <Route exact path={'/login'} component={Login} />
               <Route exact path={'/profile'} component={Profile}/>
               <Route exact path = {'/add_book'}  component={AddBook}/>
+              <Route exact path={'/book_list'} component={BookList}/>
             </Switch>
           </div>
           </Router>

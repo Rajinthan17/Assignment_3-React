@@ -143,7 +143,7 @@ const classes = makeStyles((theme) => ({
                     )}
                     {
                     this.state.message && (
-                    <div>
+                    <div style = {{margin:20}}>
                       <Typography color={this.state.successful ? 'primary' : 'error'} variant="overline" display="block" gutterBottom>
                           {this.state.message}
                       </Typography>
