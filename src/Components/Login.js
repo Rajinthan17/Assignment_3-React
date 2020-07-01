@@ -73,7 +73,6 @@ const classes = makeStyles((theme) => ({
               localStorage.setItem('username', this.state.username);
               localStorage.setItem('email', 'biru@gmail.com');
               localStorage.setItem('roles', 'ROLE_ADMIN');
-              // this.props.LoginStatus()
               this.props.history.push("/profile");
               window.location.reload();
         } else {

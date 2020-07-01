@@ -8,18 +8,19 @@ class App extends Component {
   constructor(props){
     super(props)
     this.state = {
-      isLogIn : false
+      isLogIn : true
     }
   }
 
-  changeLoginStatus() {
+  changeLoginStatus = () => {
+    
     this.setState (
       {
         isLogIn :true
       }
     )
   }
-  changeLogoutStatus() {
+  changeLogoutStatus = () => {
     this.setState (
       {
         isLogIn :false
@@ -29,7 +30,7 @@ class App extends Component {
   render(){
     return (
       <div>
-        <NavBar LoginStatus = {() => this.changeLoginStatus()}/>
+        <NavBar changeLoginStatus = {this.changeLoginStatus} isLogIn = {this.state.isLogIn}/>
         <BottomBar/>
       </div>
     );

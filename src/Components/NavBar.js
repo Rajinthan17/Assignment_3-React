@@ -11,6 +11,7 @@ import Home from './Home';
 import Signup from './Signup';
 import Login from './Login';
 import Profile from './Profile';
+import AddBook from './AddBook';
 
 
 
@@ -54,7 +55,7 @@ function NavBar(props){
                   </Typography>
                 { props.isLogIn ? 
                   (<><AccountCircleIcon fontSize = "large" align = 'center'/> 
-                <Typography>PROFILE</Typography>
+                <Typography>{localStorage.getItem('username')}</Typography>
                   <Button href = "/" className={classes.Button} >Logout</Button>
                   </>):
                   (<div><Button href = "/login" className={classes.Button} >Login</Button>
@@ -65,10 +66,9 @@ function NavBar(props){
             <Switch>
               <Route exact path={["/", "/home"]} component={Home} />
               <Route exact path={'/register'} component={Signup} />
-              <Route exact path={'/login'} component={Login}/>
-              <Route exact path={'/profile'} component={Profile}>
-                  {props.LoginStatus}
-              </Route>
+              <Route exact path={'/login'} component={Login} />
+              <Route exact path={'/profile'} component={Profile}/>
+              <Route exact path = {'/add_book'}  component={AddBook}/>
             </Switch>
           </div>
           </Router>
