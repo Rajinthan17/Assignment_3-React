@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     const classes = useStyles();
   
     return (
-      <div className={classes.root}  style={{ padding: 40 }}>
+      <div className={classes.root}  style={{ padding: 10 }}>
         <Grid container spacing={1} >
           <Grid item xs>
           </Grid>

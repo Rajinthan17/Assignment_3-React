@@ -29,7 +29,7 @@ class App extends Component {
   render(){
     return (
       <div>
-        <NavBar isLogIn = {this.state.isLogIn}/>
+        <NavBar LoginStatus = {() => this.changeLoginStatus()}/>
         <BottomBar/>
       </div>
     );

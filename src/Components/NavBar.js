@@ -8,6 +8,9 @@ import Typography from '@material-ui/core/Typography';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from './Home';
+import Signup from './Signup';
+import Login from './Login';
+import Profile from './Profile';
 
 
 
@@ -61,6 +64,11 @@ function NavBar(props){
           <div>
             <Switch>
               <Route exact path={["/", "/home"]} component={Home} />
+              <Route exact path={'/register'} component={Signup} />
+              <Route exact path={'/login'} component={Login}/>
+              <Route exact path={'/profile'} component={Profile}>
+                  {props.LoginStatus}
+              </Route>
             </Switch>
           </div>
           </Router>
