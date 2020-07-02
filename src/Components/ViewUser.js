@@ -130,13 +130,13 @@ class ViewUser extends Component {
                         },
                         ]}
                         data={[
-                        { Id:1, Username: 'Baran', Email: 1987, Role:2 },
-                        { Id:2, Username: 'Baran', Email: 1987, Role:2 },
-                        { Id:3, Username: 'Baran', Email: 1987, Role:2 },
-                        { Id:4, Username: 'Baran', Email: 1987, Role:2 },
-                        { Id:5, Username: 'Baran', Email: 1987, Role:2 },
-                        { Id:6, Username: 'Baran', Email: 1987, Role:2 },
-                        { Id:7, Username: 'Baran', Email: 1987, Role:2 },
+                        { Id:1, Username: 'Rajinthan', Email: "Rajinthan@gmail.com", Role:1 },
+                        { Id:2, Username: 'Thasharath', Email: "Thasharath@gmail.com", Role:2 },
+                        { Id:3, Username: 'Sarujan', Email: "Sarujan@gmail.com", Role:2 },
+                        { Id:4, Username: 'Bapithan', Email: "Bapithan@gmail.com", Role:2 },
+                        { Id:5, Username: 'Karu', Email: "Karu@gmail.com", Role:2 },
+                        { Id:6, Username: 'Thuvarakan', Email: "Thuvarakan@gmail.com", Role:1 },
+                        { Id:7, Username: 'Vinith', Email: "Vinith@gmail.com", Role:1 },
                         ]}
                         actions={[
                             {

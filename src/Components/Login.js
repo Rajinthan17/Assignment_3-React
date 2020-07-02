@@ -95,7 +95,7 @@ const classes = makeStyles((theme) => ({
               localStorage.setItem('id', '1');
               localStorage.setItem('username', this.state.username);
               localStorage.setItem('email', 'Rajinthan@gmail.com');
-              localStorage.setItem('roles', 'User');
+              localStorage.setItem('roles', 'user'); //Please change role as ADMIN to check Admin Board
               
               this.props.history.push("/profile");
               window.location.reload();
