@@ -15,6 +15,9 @@ import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import BookList from './BookList';
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
 
 
 
@@ -60,7 +63,7 @@ const theme = createMuiTheme({
       backgroundColor:'#263238',
     } 
 }
-  class AddBook extends Component {
+  class AddUser extends Component {
     constructor(props){
       super(props)
       this.state = {
@@ -71,19 +74,19 @@ const theme = createMuiTheme({
     handleLogin = (e) => {
       this.props.history.push('/book_list');
       window.location.reload();
-    }
+}
       Booksave = (e) => {
         e.preventDefault();
         this.setState({
           successful: false,
-          message: "Sucess- Book Saved Sucessfully"
+          message: "Sucess- User Add Sucessfully"
         })
       }
       Bookupdate = (e) => {
         e.preventDefault();
         this.setState({
           successful: false,
-          message: "Sucess- Book Update Sucessfully"
+          message: "Sucess- User Update Sucessfully"
         })
       }
     render(){
@@ -103,18 +106,18 @@ const theme = createMuiTheme({
                 {this.state.successful ?
                 (<div style = {{marginLeft: 40}}>
                   <form style = {{color : "black"},{marginLeft: 15}}>
-                  { localStorage.getItem('isLogin') ? 
-                  (<h3 style = {{color: 'black'}}> <AddBoxIcon fontSize = "small"/>  Add New Book</h3> ):
-                  (<h3 style = {{color: 'black'}}> <CheckBoxIcon fontSize = "small"/>  Update Book </h3>)
+                  { this.props.location.customNameData ? 
+                  (<h3 style = {{color: 'black'}}> <AddBoxIcon fontSize = "small"/>  Add New User</h3> ):
+                  (<h3 style = {{color: 'black'}}> <CheckBoxIcon fontSize = "small"/>  Update User </h3>)
                   }
                           <FormControl>
                             <TextField style  ={{width : "150%"}}
                             required
                             size="small"
-                            id="Title"
-                            label="Title"
+                            id="Username"
+                            label="Username"
                             defaultValue=""
-                            helperText="Enter Book Title"
+                            helperText="Enter Username"
                             variant="outlined"
                             />
                           </FormControl>
@@ -123,81 +126,42 @@ const theme = createMuiTheme({
                               <TextField style  ={{width : "150%"}}
                               required
                               size="small"
-                              id="Author"
-                              label="Author"
+                              id="email"
+                              label="Email"
                               defaultValue=""
-                              helperText="Enter Book Author"
+                              helperText="Enter Email Address"
                               variant="outlined"
                               />
                           </FormControl>
                           <br/>
-                          <FormControl>
-                              <TextField style  ={{width : "150%"}}
-                              size="small"
-                              required
-                              id="cover_photo_url"
-                              label="Cover Photo URL"
-                              defaultValue=""
-                              helperText="Cover Photo URL"
-                              variant="outlined"
-                              />
-                          </FormControl>
-                          &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-                          <FormControl>
-                              <TextField style  ={{width : "150%"}}
-                              size="small"
-                              required
-                              id="ISBN_Number"
-                              label="ISBN Number"
-                              defaultValue=""
-                              helperText="Enter Book ISBN Number"
-                              variant="outlined"
-                              />
-                          </FormControl>
-                          <br/>
-                          <FormControl>
-                              <TextField
-                              size="small"
-                              required
-                              id="Price"
-                              label="Price"
-                              defaultValue=""
-                              helperText="Enter Book Price"
-                              variant="outlined"
-                              />
-                          </FormControl>
-                          &emsp;&emsp;
-                          <FormControl size="small">
-                              <InputLabel >Name</InputLabel>
+                          <FormControl style  ={{width : "45%"}} >
+                              <InputLabel >Role</InputLabel>
                               <NativeSelect
                               inputProps={{
-                                  name: 'Language',
-                                  id: 'Language',
+                                  name: 'Role',
+                                  id: 'Role',
                               }}
                               >
-                              <option value={"Select Language"}>Select Language</option>
-                              <option value={"Tamil"}>Tamil</option>
-                              <option value={"English"}>English</option>
-                              <option value={"Sinhala"}>Sinhala</option>
+                              <option value={"Select Role"}>Select Role</option>
+                              <option value={"Admin"}>Admin</option>
+                              <option value={"User"}>User</option>
                               </NativeSelect>
-                              <FormHelperText>Please Select your language</FormHelperText>
+                              <FormHelperText>Please Select your Role</FormHelperText>
                           </FormControl>
                           &emsp;&emsp;
-                          <FormControl size="small">
-                          <InputLabel >Name</InputLabel>
-                          <NativeSelect
-                          inputProps={{
-                              name: 'Genre',
-                              id: 'Genre',
-                          }}
-                          >
-                          <option value={"Select Genere"}>Select Language</option>
-                          <option value={"Bio"}>Biography</option>
-                          <option value={"Story"}>Story</option>
-                          <option value={"Drama"}>Drama</option>
-                          </NativeSelect>
-                          <FormHelperText>Please Select your Genere</FormHelperText>
+                          <FormControl>
+                              <TextField style  ={{width : "150%"}}
+                              required
+                              size="small"
+                              id="password"
+                              label="Password"
+                              type = "password"
+                              defaultValue=""
+                              helperText="Enter your password"
+                              variant="outlined"
+                              />
                           </FormControl>
+                          
                       <br/>
                       <MuiThemeProvider theme={theme}>
                       <Button style={{float: 'right'}}
@@ -207,7 +171,7 @@ const theme = createMuiTheme({
                           startIcon={<ListIcon />}
                           onClick = {this.handleLogin}
                           >
-                          Book List
+                          User List
                       </Button>
                       &emsp;&emsp;
                       <Button style={{float: 'right'}}
@@ -267,4 +231,4 @@ const theme = createMuiTheme({
     }
   }
 
-export default AddBook 
+export default AddUser 

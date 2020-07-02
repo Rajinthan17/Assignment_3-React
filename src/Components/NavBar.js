@@ -14,6 +14,8 @@ import Profile from './Profile';
 import AddBook from './AddBook';
 import BookList from './BookList';
 import Admin from './Admin';
+import AddUser from './AddUser';
+import ViewUser from './ViewUser';
 
 
 
@@ -83,6 +85,8 @@ function NavBar(props){
               <Route exact path = {'/add_book'}  component={AddBook}/>
               <Route exact path={'/book_list'} component={BookList}/>
               <Route exact path={'/admin'} component={Admin}/>
+              <Route exact path={'/add_user'} component={AddUser}/>
+              <Route exact path={'/view_user'} component={ViewUser}/>
             </Switch>
           </div>
           </Router>

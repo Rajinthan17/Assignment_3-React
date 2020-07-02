@@ -4,9 +4,10 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import GroupIcon from '@material-ui/icons/Group';
+import MenuBookIcon from '@material-ui/icons/MenuBook';
 
 
-const useStyles = makeStyles((theme) => ({
+const classes = makeStyles((theme) => ({
     root: {
       flexGrow: 1,
     },
@@ -23,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
       minWidth: 275,
       backgroundColor:'#263238',
       marginTop: 20,
-      height: 200,
       color: 'white'
     },
     title: {
@@ -33,9 +33,20 @@ const useStyles = makeStyles((theme) => ({
 }
 
 
-  function Admin() {
-    const classes = useStyles();
-  
+  class Admin extends Component {
+    UserAdd = (e) => {
+      this.props.history.push({pathname :'/add_user',customNameData: true});
+      window.location.reload();
+    }
+    UserUpdate = (e) => {
+      this.props.history.push({pathname :'/add_user',customNameData: false});
+      window.location.reload();
+    }
+    UserView = (e) => {
+      this.props.history.push({pathname :'/view_user'});
+      window.location.reload();
+    }
+    render(){
     return (
       <div className={classes.root}  style={{ padding: 10 }}>
         <Grid container spacing={1} >
@@ -45,27 +56,32 @@ const useStyles = makeStyles((theme) => ({
           <Paper>
               <Card style={style.root} variant="outlined">
                 <div style = {{margin:20} }>
-                  <center><h1 style = {{backgroundColor : "brown"}}>Welcome to Admin Panel</h1></center>
+                  <center><h1 style = {{backgroundColor : "#3e2723"}}>Welcome to Admin Panel</h1></center>
                 </div>
                 <div style = {{margin:20} }>
                     <Grid container spacing={1}>
                         <Grid item xs = {5}>
-                            <Paper className={classes.paper}>
+                            <Paper className={classes.paper} style = {{backgroundColor : "#795548"}}>
                             <center>
-                                <GroupIcon fontSize = 'large'/>
-                                <br/>
-                                <button>
-                                   
-                                </button>
+                                <GroupIcon style={{ fontSize: 150 }}/>
                             </center>
-                            </Paper>
-                            
+                                <br/>
+                                <p style = {{color: "white"}}>Manage Users</p>
+                                <button onClick = {this.UserAdd}>Add user</button>
+                                <button style={{ float: 'right' }}onClick = {this.UserView}>View User</button>
+                            </Paper> 
                         </Grid>
                         <Grid item xs = {2}/>
                         <Grid item xs ={5}>
-                            <Paper className={classes.paper}>
-                                xs
-                            </Paper>
+                        <Paper className={classes.paper} style = {{backgroundColor : "#795548"}}>
+                            <center>
+                                <MenuBookIcon style={{ fontSize: 150 }}/>
+                            </center>
+                                <br/>
+                                <p style = {{color: "white"}}>Manage Books</p>
+                                <button>Add Book</button>
+                                <button style={{ float: 'right' }}>View Books</button>
+                            </Paper> 
                         </Grid>
                     </Grid>
                 </div>
@@ -78,5 +94,7 @@ const useStyles = makeStyles((theme) => ({
         </div>
     )
   }
+}
+
 
 export default Admin 
