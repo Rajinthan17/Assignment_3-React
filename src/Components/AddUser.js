@@ -106,9 +106,10 @@ const theme = createMuiTheme({
                 {this.state.successful ?
                 (<div style = {{marginLeft: 40}}>
                   <form style = {{color : "black"},{marginLeft: 15}}>
-                  { this.props.location.customNameData ? 
-                  (<h3 style = {{color: 'black'}}> <AddBoxIcon fontSize = "small"/>  Add New User</h3> ):
-                  (<h3 style = {{color: 'black'}}> <CheckBoxIcon fontSize = "small"/>  Update User </h3>)
+                  { localStorage.getItem('isLogin2') ? 
+                  (<h3 style = {{color: 'black'}}> <CheckBoxIcon fontSize = "small"/>  Update User </h3>):
+                  (<h3 style = {{color: 'black'}}> <AddBoxIcon fontSize = "small"/>  Add New User</h3> )
+                  
                   }
                           <FormControl>
                             <TextField style  ={{width : "150%"}}
@@ -149,6 +150,7 @@ const theme = createMuiTheme({
                               <FormHelperText>Please Select your Role</FormHelperText>
                           </FormControl>
                           &emsp;&emsp;
+                          { !localStorage.getItem('isLogin2') ? (
                           <FormControl>
                               <TextField style  ={{width : "150%"}}
                               required
@@ -161,7 +163,7 @@ const theme = createMuiTheme({
                               variant="outlined"
                               />
                           </FormControl>
-                          
+                          ):(null)}
                       <br/>
                       <MuiThemeProvider theme={theme}>
                       <Button style={{float: 'right'}}
@@ -183,16 +185,7 @@ const theme = createMuiTheme({
                           Reset
                       </Button>
                       &emsp;&emsp;
-                    { localStorage.getItem('isLogin') ? 
-                      (<Button style={{float: 'right'}}
-                          variant="contained"
-                          color="secondary"
-                          size="small"
-                          startIcon={<SaveIcon />}
-                          onClick = {this.Booksave}
-                          >
-                          Save
-                      </Button>):
+                    { localStorage.getItem('isLogin2') ? 
                       (<Button style={{float: 'right'}}
                         variant="contained"
                         color="secondary"
@@ -201,7 +194,16 @@ const theme = createMuiTheme({
                         onClick = {this.Bookupdate}
                         >
                         Update
-                      </Button>)
+                      </Button>):
+                      (<Button style={{float: 'right'}}
+                      variant="contained"
+                      color="secondary"
+                      size="small"
+                      startIcon={<SaveIcon />}
+                      onClick = {this.Booksave}
+                      >
+                      Save
+                  </Button>)
                     }
                       </MuiThemeProvider>
                   </form>

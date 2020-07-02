@@ -47,6 +47,9 @@ function NavBar(props){
     const LogOut = () => {
       localStorage.clear()
     }
+    const AddBookWork = () => {
+      localStorage.removeItem("isLogin");
+    }
     return(
         <React.Fragment>
           <Router>
@@ -61,7 +64,7 @@ function NavBar(props){
                       ):
                       (<>{localStorage.getItem('username') && (
                         <>
-                          <Button href = "/add_book" className={classes.Button}>Add Book</Button>
+                          <Button href = "/add_book" className={classes.Button} onClick = {AddBookWork}>Add Book</Button>
                           <Button href = "/book_list" className={classes.Button}>Book List</Button>
                         </>
                       )}</>)

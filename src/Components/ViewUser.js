@@ -92,10 +92,9 @@ class ViewUser extends Component {
             message:''
         }
     }
-    handelUpdate = () => {
-      localStorage.setItem('isLogin', false);
-    }
+
     handleLogin = (e) => {
+            localStorage.setItem('isLogin2', true);
             this.props.history.push('/add_user');
             window.location.reload();
       }
@@ -142,7 +141,6 @@ class ViewUser extends Component {
                         actions={[
                             {
                                 icon: CheckBoxIcon,
-                                onClick: () => {this.handelUpdate()},
                                 onClick : () => {this.handleLogin()}
                               },
                             rowData => ({

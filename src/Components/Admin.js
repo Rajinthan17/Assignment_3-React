@@ -35,7 +35,8 @@ const classes = makeStyles((theme) => ({
 
   class Admin extends Component {
     UserAdd = (e) => {
-      this.props.history.push({pathname :'/add_user',customNameData: true});
+      this.props.history.push({pathname :'/add_user',customNameData: true})
+      localStorage.removeItem("isLogin2");
       window.location.reload();
     }
     UserUpdate = (e) => {

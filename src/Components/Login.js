@@ -46,33 +46,57 @@ const classes = makeStyles((theme) => ({
         username: "",
         email: "",
         password: "",
-        message: "",
-        successful: false
+        userMessage: "",
+        passMessage: "",
+        successful: false,
       }
     }
     onChangeUsername = (e) => {
       this.setState({
         username: e.target.value
       });
+      if(this.state.username.length <= 0){
+        this.setState({
+          userMessage: "This Field is Required"
+        })
+        e.helperText = this.state.userMessage
+      }
+      else{
+        this.setState({
+          userMessage: ""
+        })
+        e.helperText = this.state.userMessage
+      }
     }
   
     onChangePassword = (e) => {
       this.setState({
         password: e.target.value
       });
+      if(this.state.password.length <= 0){
+        this.setState({
+          passMessage: "This Field is Required"
+        })
+        e.helperText = this.state.passMessage
+      }
+      else{
+        this.setState({
+          passMessage: ""
+        })
+        e.helperText = this.state.passMessage
+      }
     }
   
       handleLogin = (e) => {
-        e.preventDefault();
-    
+        e.preventDefault()
         if (this.state.username && this.state.password) {
               console.log("username = " + this.state.username)
               console.log("password = " + this.state.password)
               localStorage.setItem('id', '1');
               localStorage.setItem('username', this.state.username);
               localStorage.setItem('email', 'Rajinthan@gmail.com');
-              localStorage.setItem('roles', 'ADMIN');
-              localStorage.setItem('isLogin', true);
+              localStorage.setItem('roles', 'User');
+              
               this.props.history.push("/profile");
               window.location.reload();
         } else {
@@ -99,12 +123,14 @@ const classes = makeStyles((theme) => ({
                   <p>
                         <FormControl>
                           <TextField
+
                           id="userName"
                           label="User Name"
                           defaultValue=""
-                          helperText="Please Enter your username"
                           variant="outlined"
                           onChange = {this.onChangeUsername}
+                          onClick = {this.onChangeUsername}
+                          helperText={this.state.userMessage ? (<span style = {{color:"red"}}>{this.state.userMessage}</span>):("Enter Your User Name")}
                           />
                         </FormControl>
                         <FormControl>
@@ -113,9 +139,11 @@ const classes = makeStyles((theme) => ({
                         label="Password"
                         type="password"
                         defaultValue=""
-                        helperText="Please Enter The Password"
+                        
                         variant="outlined"
                         onChange = {this.onChangePassword}
+                        onClick = {this.onChangePassword}
+                        helperText={this.state.passMessage ? (<span style = {{color:"red"}}>{this.state.passMessage}</span>):("Enter Your Password")}
                         />
                         </FormControl>
                         <FormControl>

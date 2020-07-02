@@ -92,10 +92,8 @@ class BookList extends Component {
             message:''
         }
     }
-    handelUpdate = () => {
-      localStorage.setItem('isLogin', false);
-    }
     handleLogin = (e) => {
+      localStorage.setItem('isLogin', true);
             this.props.history.push('/add_book');
             window.location.reload();
       }
@@ -148,7 +146,6 @@ class BookList extends Component {
                         actions={[
                             {
                                 icon: CheckBoxIcon,
-                                onClick: () => {this.handelUpdate()},
                                 onClick : () => {this.handleLogin()}
                               },
                             rowData => ({

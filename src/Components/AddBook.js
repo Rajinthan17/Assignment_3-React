@@ -104,8 +104,8 @@ const theme = createMuiTheme({
                 (<div style = {{marginLeft: 40}}>
                   <form style = {{color : "black"},{marginLeft: 15}}>
                   { localStorage.getItem('isLogin') ? 
-                  (<h3 style = {{color: 'black'}}> <AddBoxIcon fontSize = "small"/>  Add New Book</h3> ):
-                  (<h3 style = {{color: 'black'}}> <CheckBoxIcon fontSize = "small"/>  Update Book </h3>)
+                  (<h3 style = {{color: 'black'}}> <CheckBoxIcon fontSize = "small"/>  Update Book </h3>):
+                  (<h3 style = {{color: 'black'}}> <AddBoxIcon fontSize = "small"/>  Add New Book</h3> )
                   }
                           <FormControl>
                             <TextField style  ={{width : "150%"}}

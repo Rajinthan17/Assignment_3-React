@@ -47,7 +47,10 @@ const classes = makeStyles((theme) => ({
         email: "",
         password: "",
         message: "",
-        successful: false
+        successful: false,
+        userMessage: '',
+        emailMessage: '',
+        passMessage : ''
       };
     }
   
@@ -55,18 +58,66 @@ const classes = makeStyles((theme) => ({
       this.setState({
         username: e.target.value
       });
+      if(this.state.username.length <= 0){
+        this.setState({
+          userMessage: "This Field is Required"
+        })
+        e.helperText = this.state.userMessage
+      }
+      else if(this.state.username.length < 3 || this.state.username.length >20 ){
+        this.setState({
+          userMessage: "username must be between 3 and 20 characters"
+        })
+        e.helperText = this.state.userMessage
+      }
+      else{
+        this.setState({
+          userMessage: ""
+        })
+        e.helperText = this.state.userMessage
+      }
     }
   
     onChangeEmail = (e) => {
       this.setState({
         email: e.target.value
       });
+      if(this.state.email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) ){
+        this.setState({
+          emailMessage: ""
+        })
+        e.helperText = this.state.emailMessage
+      }
+      else{
+        this.setState({
+          emailMessage: "This is not a valide Email"
+        })
+        e.helperText = this.state.emailMessage
+      }
     }
   
     onChangePassword = (e) => {
       this.setState({
         password: e.target.value
       });
+      if(this.state.password.length <= 0){
+        this.setState({
+          passMessage: "This Field is Required"
+        })
+        e.helperText = this.state.passMessage
+      }
+      else if(this.state.password.length < 6 || this.state.password.length >40 ){
+        this.setState({
+          passMessage: "Password must be between 6 and 40 characters"
+        })
+        e.helperText = this.state.passMessage
+      }
+      else{
+        this.setState({
+          passMessage: ""
+        })
+        e.helperText = this.state.passMessage
+      }
     }
   
     handleRegister = (e) => {
@@ -77,11 +128,6 @@ const classes = makeStyles((theme) => ({
         this.setState({
           successful: true,
           message: "Registered successfully"
-        })
-      } else {
-        this.setState({
-          successful: false,
-          message: "username/password/email is empty"
         })
       }
     }
@@ -108,9 +154,10 @@ const classes = makeStyles((theme) => ({
                       id="userName"
                       label="User Name"
                       defaultValue=""
-                      helperText="Please Enter your username"
+                      helperText={this.state.userMessage ? (<span style = {{color:"red"}}>{this.state.userMessage}</span>):("Enter Your User Name")}
                       variant="outlined"
                       onChange = {this.onChangeUsername}
+                      onClick = {this.onChangeUsername}
                       />
                     </p>
                     <p>
@@ -118,9 +165,10 @@ const classes = makeStyles((theme) => ({
                       id="email"
                       label="E-Mail"
                       defaultValue=""
-                      helperText="Please Enter The E-mail"
+                      helperText={this.state.emailMessage ? (<span style = {{color:"red"}}>{this.state.emailMessage}</span>):("Enter Your Email Address")}
                       variant="outlined"
                       onChange = {this.onChangeEmail}
+                      onClick = {this.onChangeEmail}
                       />
                     </p>
                     <p>
@@ -129,9 +177,10 @@ const classes = makeStyles((theme) => ({
                       label="Password"
                       type="password"
                       defaultValue=""
-                      helperText="Please Enter The Password"
+                      helperText={this.state.passMessage ? (<span style = {{color:"red"}}>{this.state.passMessage}</span>):("Enter Your Password")}
                       variant="outlined"
                       onChange = {this.onChangePassword}
+                      onClick = {this.onChangePassword}
                       />
                     </p>
                     <p>
