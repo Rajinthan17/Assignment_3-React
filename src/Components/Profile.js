@@ -47,7 +47,7 @@ export default class Profile extends Component {
                 <CardContent>
                   <Typography style={style.title} gutterBottom>
                     <h1>Profile : {currentUser.username}</h1>
-                    <p><strong>Token:</strong>{" "}{Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 10)}</p>
+                    <p><strong>Token:</strong>{" "}{Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 10)}{Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 10)}</p>
                     <p><strong>Id:</strong>{" "}{currentUser.id}</p>
                     <p><strong>Email:</strong>{" "}{currentUser.email}</p>
                     <p><strong>Authorities:</strong>{" "}{currentUser.roles}</p>

@@ -14,6 +14,7 @@ import ListIcon from '@material-ui/icons/List';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import BookList from './BookList';
 
 
 
@@ -63,11 +64,14 @@ const theme = createMuiTheme({
     constructor(props){
       super(props)
       this.state = {
-        ifLogIn : true,
         message : '',
         successful : true,
       }
     }
+    handleLogin = (e) => {
+      this.props.history.push('/book_list');
+      window.location.reload();
+}
       Booksave = (e) => {
         e.preventDefault();
         this.setState({
@@ -94,10 +98,12 @@ const theme = createMuiTheme({
               <Grid container spacing={1} >
               <Grid item xs/>
                 <Grid item xs = {11}>
+                <Paper>
+                  <Card style = {{margin:5}}>
                 {this.state.successful ?
-                (<div style = {{marginLeft: 40},{backgroundColor : "White"}}>
+                (<div style = {{marginLeft: 40}}>
                   <form style = {{color : "black"},{marginLeft: 15}}>
-                  { this.state.ifLogIn ?
+                  { localStorage.getItem('isLogin') ? 
                   (<h3 style = {{color: 'black'}}> <AddBoxIcon fontSize = "small"/>  Add New Book</h3> ):
                   (<h3 style = {{color: 'black'}}> <CheckBoxIcon fontSize = "small"/>  Update Book </h3>)
                   }
@@ -199,9 +205,11 @@ const theme = createMuiTheme({
                           color="primary"
                           size="small"
                           startIcon={<ListIcon />}
+                          onClick = {this.handleLogin}
                           >
                           Book List
                       </Button>
+                      &emsp;&emsp;
                       <Button style={{float: 'right'}}
                           variant="contained"
                           color="primary"
@@ -210,7 +218,8 @@ const theme = createMuiTheme({
                           >
                           Reset
                       </Button>
-                    { this.state.ifLogIn ?     
+                      &emsp;&emsp;
+                    { localStorage.getItem('isLogin') ? 
                       (<Button style={{float: 'right'}}
                           variant="contained"
                           color="secondary"
@@ -242,6 +251,8 @@ const theme = createMuiTheme({
                   {this.state.message}
                 </Button></center>)
                 }
+                </Card>
+                </Paper>
                 </Grid>
               <Grid item xs/>
               </Grid>

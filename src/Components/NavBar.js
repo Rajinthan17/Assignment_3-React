@@ -13,6 +13,7 @@ import Login from './Login';
 import Profile from './Profile';
 import AddBook from './AddBook';
 import BookList from './BookList';
+import Admin from './Admin';
 
 
 
@@ -38,6 +39,12 @@ const useStyles = makeStyles((theme) => ({
 
 function NavBar(props){
     const classes = useStyles()
+    if(localStorage.getItem('roles') == "ADMIN"){
+    var Board = localStorage.getItem('roles')
+    }
+    const LogOut = () => {
+      localStorage.clear()
+    }
     return(
         <React.Fragment>
           <Router>
@@ -47,17 +54,21 @@ function NavBar(props){
                   <Typography  className={classes.title}>
                       Books Shop
                       <Button href = "/" className={classes.Button}>Home</Button>
-                      {props.isLogIn && (
+                      {Board ? (
+                        <Button href = "/admin" className={classes.Button}>Admin Board</Button>
+                      ):
+                      (<>{localStorage.getItem('username') && (
                         <>
                           <Button href = "/add_book" className={classes.Button}>Add Book</Button>
                           <Button href = "/book_list" className={classes.Button}>Book List</Button>
                         </>
-                      )}
+                      )}</>)
+                    }
                   </Typography>
-                { props.isLogIn ? 
+                {localStorage.getItem('username') ? 
                   (<><AccountCircleIcon fontSize = "large" align = 'center'/> 
                 <Typography>{localStorage.getItem('username')}</Typography>
-                  <Button href = "/" className={classes.Button} >Logout</Button>
+                  <Button href = "/" className={classes.Button} onClick = {LogOut} >Logout</Button>
                   </>):
                   (<div><Button href = "/login" className={classes.Button} >Login</Button>
                   <Button href = '/register' className={classes.Button} >Signup</Button></div>)}
@@ -71,6 +82,7 @@ function NavBar(props){
               <Route exact path={'/profile'} component={Profile}/>
               <Route exact path = {'/add_book'}  component={AddBook}/>
               <Route exact path={'/book_list'} component={BookList}/>
+              <Route exact path={'/admin'} component={Admin}/>
             </Switch>
           </div>
           </Router>

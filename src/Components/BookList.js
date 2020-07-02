@@ -26,6 +26,7 @@ import Avatar from '@material-ui/core/Avatar';
 import PersonPinIcon from '@material-ui/icons/PersonPin';
 import Button from '@material-ui/core/Button';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import AddBook from "./AddBook";
 
 
 
@@ -89,9 +90,15 @@ class BookList extends Component {
         this.state = {
             successful : true,
             message:''
-
         }
     }
+    handelUpdate = () => {
+      localStorage.setItem('isLogin', false);
+    }
+    handleLogin = (e) => {
+            this.props.history.push('/add_book');
+            window.location.reload();
+      }
     Sucess = () => {
         this.setState({
           successful: false,
@@ -141,6 +148,8 @@ class BookList extends Component {
                         actions={[
                             {
                                 icon: CheckBoxIcon,
+                                onClick: () => {this.handelUpdate()},
+                                onClick : () => {this.handleLogin()}
                               },
                             rowData => ({
                                 icon: DeleteOutline,

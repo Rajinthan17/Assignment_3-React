@@ -7,30 +7,12 @@ import BottomBar from './Components/BottomBar';
 class App extends Component {
   constructor(props){
     super(props)
-    this.state = {
-      isLogIn : true
-    }
   }
 
-  changeLoginStatus = () => {
-    
-    this.setState (
-      {
-        isLogIn :true
-      }
-    )
-  }
-  changeLogoutStatus = () => {
-    this.setState (
-      {
-        isLogIn :false
-      }
-    )
-  }
   render(){
     return (
       <div>
-        <NavBar changeLoginStatus = {this.changeLoginStatus} isLogIn = {this.state.isLogIn}/>
+        <NavBar/>
         <BottomBar/>
       </div>
     );

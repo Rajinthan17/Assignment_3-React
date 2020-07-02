@@ -66,7 +66,6 @@ const classes = makeStyles((theme) => ({
         e.preventDefault();
     
         if (this.state.username && this.state.password) {
-              
               console.log("username = " + this.state.username)
               console.log("password = " + this.state.password)
               localStorage.setItem('id', '1');
