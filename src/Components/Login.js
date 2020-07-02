@@ -95,15 +95,10 @@ const classes = makeStyles((theme) => ({
               localStorage.setItem('id', '1');
               localStorage.setItem('username', this.state.username);
               localStorage.setItem('email', 'Rajinthan@gmail.com');
-              localStorage.setItem('roles', 'user'); //Please change role as ADMIN to check Admin Board
-              
+              localStorage.setItem('roles', 'user'); //Please change role as ADMIN to check Admin
               this.props.history.push("/profile");
               window.location.reload();
-        } else {
-          this.setState({
-            message: "Empty username or password"
-          })
-        }
+        } 
       }
     render(){
     return (
