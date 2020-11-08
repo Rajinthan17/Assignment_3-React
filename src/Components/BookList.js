@@ -1,183 +1,369 @@
-import React, { Component } from "react";
-import ReactDOM from "react-dom";
-import MaterialTable from "material-table";
-import Paper from '@material-ui/core/Paper';
-import { Card, CardContent, Typography, Grid, FormControl, TextField } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useEffect } from "react";
+import { Link } from 'react-router-dom';
+import { makeStyles, Checkbox, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Grid,TextField,InputAdornment} from '@material-ui/core';
+import SearchIcon from '@material-ui/icons/Search';
+import { useTheme } from '@material-ui/core/styles';
 import ListAltIcon from '@material-ui/icons/ListAlt';
-import { forwardRef } from 'react';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import AddBox from '@material-ui/icons/AddBox';
-import ArrowDownward from '@material-ui/icons/ArrowDownward';
-import Check from '@material-ui/icons/Check';
-import ChevronLeft from '@material-ui/icons/ChevronLeft';
-import ChevronRight from '@material-ui/icons/ChevronRight';
-import Clear from '@material-ui/icons/Clear';
-import DeleteOutline from '@material-ui/icons/DeleteOutline';
-import Edit from '@material-ui/icons/Edit';
-import FilterList from '@material-ui/icons/FilterList';
-import FirstPage from '@material-ui/icons/FirstPage';
-import LastPage from '@material-ui/icons/LastPage';
-import Remove from '@material-ui/icons/Remove';
-import SaveAlt from '@material-ui/icons/SaveAlt';
-import Search from '@material-ui/icons/Search';
-import ViewColumn from '@material-ui/icons/ViewColumn';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import { IconButton } from '@material-ui/core';
+import ClearIcon from '@material-ui/icons/Clear';
+import axios from 'axios';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import LastPageIcon from '@material-ui/icons/LastPage';
+import Snackbar from '@material-ui/core/Snackbar';
+import Alert from '@material-ui/lab/Alert';
 import Avatar from '@material-ui/core/Avatar';
 import PersonPinIcon from '@material-ui/icons/PersonPin';
-import Button from '@material-ui/core/Button';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import AddBook from "./AddBook";
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
+import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+import BookService from "./BookService";
 
 
+const useStyles = makeStyles({
+  table: {
+    minWidth: 650,
+  },
+  grid: {
+      margin: 40,
+      padding: '10px 10px 10px 10px',
+      backgroundColor: "black"
+  },
+  paper: {
+    padding: '10px 10px 10px 10px', 
+    margin: '10px 10px 10px 10px',
+    position: 'inherit'
+  },
+  search: {
+    position: 'relative',
+    align:'left',
+    },
+});
 
-const tableIcons = {
-    Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
-    Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
-    Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-    Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
-    DetailPanel: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-    Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
-    Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
-    Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
-    FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
-    LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
-    NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-    PreviousPage: forwardRef((props, ref) => <ChevronLeft {...props} ref={ref} />),
-    ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-    Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
-    SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
-    ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
-    ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
+const useStyles1 = makeStyles((theme) => ({
+  root: {
+    flexShrink: 0,
+    marginLeft: theme.spacing(2.5),
+  },
+}));
+
+function TablePaginationActions(props) {
+  const classes = useStyles1();
+  const theme = useTheme();
+  const { count, page, rowsPerPage, onChangePage } = props;
+
+  const handleFirstPageButtonClick = (event) => {
+    onChangePage(event, 0);
   };
 
+  const handleBackButtonClick = (event) => {
+    onChangePage(event, page - 1);
+    console.log("Page" + page)
+  };
 
+  const handleNextButtonClick = (event) => {
+    onChangePage(event, page + 1);
+    console.log("Page" + page)
+  };
 
-const classes = makeStyles((theme) => ({
-    root: {
-      flexGrow: 1,
-    },
-    paper: {
-      padding: theme.spacing(2),
-      textAlign: 'left',
-      color: theme.palette.text.secondary,
-      
-    },
-    
-  }));
-  const style = {
-    root: {
-      minWidth: 275,
-      backgroundColor:'#263238',
-      marginTop: 20,
-      
-      color: 'white'
-    },
-    title: {
-      fontSize: 24,
-      textAlign:'center'
-    },
-    formStyle : {
-      color : '#2979ff',
-      marginLeft : 20
-    },
-    buttonStyle : {
-      backgroundColor:'#263238',
-    }
+  const handleLastPageButtonClick = (event) => {
+    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+  };
+
+  return (
+    <div className={classes.root}>
+      <IconButton
+        onClick={handleFirstPageButtonClick}
+        disabled={page === 0}
+        aria-label="first page"
+      >
+        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+      </IconButton>
+      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
+        {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+      </IconButton>
+      <IconButton
+        onClick={handleNextButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="next page"
+      >
+        {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+      </IconButton>
+      <IconButton
+        onClick={handleLastPageButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="last page"
+      >
+        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+      </IconButton>
+    </div>
+  );
 }
-class BookList extends Component {
-    constructor(props){
-        super(props)
-        this.state = {
-            successful : true,
-            message:''
-        }
-    }
-    handleLogin = (e) => {
-      localStorage.setItem('isLogin', true);
-            this.props.history.push('/add_book');
-            window.location.reload();
+
+
+
+export default function BookDetails(props) {
+
+  const classes = useStyles();
+  const [books, setBooks] = React.useState([]);
+  const [searchString, setSearchString]= React.useState('');
+  const [page, setPage] = React.useState(0);
+  const [count, setCount] = React.useState(0);
+  const [priceADC, setPriceADC] = React.useState(false);
+  const [snackbaropen, setSnackbaropen] = React.useState(false);
+  const [message, setMessage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [state, setState] = React.useState({
+    vertical: 'top',
+    horizontal: 'center',
+  });
+
+  const { vertical, horizontal } = state;
+  // const [id , setId] = React.useState();
+  // var books = []
+  // var id = 8
+  
+  const searchChange = (e) => {
+    console.log(e.target.value)
+    setSearchString(e.target.value)
+  }
+
+  const fillAlert = () => {
+    window.location.reload()
+  }
+
+  const deleteBook = (deleteId) => {
+    BookService.DeleteBookById(deleteId)
+    .then((Response) => {
+      setMessage('Book Deleted Successfully')
+      setSnackbaropen(true)
+      //setState({snackbaropen:true, message:'Book Deleted Successfully'})
+      setTimeout(()=> fillAlert(), 3000)
+    })
+  }
+
+  const serachData = () => {
+    setPage(0)
+    let sort = "DESC"
+      if(priceADC){
+        sort = "ASC"
       }
-    Sucess = () => {
-        this.setState({
-          successful: false,
-          message: "Sucess- Book Deleted Sucessfully"
-        })
-      }
-    render(){
-    return (
-        <div className={classes.root}  style={{ padding: 10 }}>
-        <Grid container spacing={1} >
-          <Grid item xs>
-          </Grid>
-          <Grid item xs = {8}>
-          <Paper>
-              <Card style={style.root} variant="outlined">
-              <Grid container spacing={1} >
-              <Grid item xs/>
-                <Grid item xs = {11}>
-                {this.state.successful ? 
-                    (<MaterialTable style = {{margin:15}} icons={tableIcons}
-                        title = {<><ListAltIcon fontSize = "small"/>Book List</> }
-                        columns={[
-                        { title: 'Title', field: 'Title' },
-                        { title: 'Author', field: 'Author' },
-                        { title: 'IBSN Number', field: 'IBSN_Number', type: 'numeric' },
-                        { title: 'Price', field: 'Price' },
-                        {
-                            title: 'Language',
-                            field: 'Language',
-                            lookup: { 1: 'English', 2: 'Tamil', 3: 'Shinhala' },
-                        },
-                        {
-                            title: 'Genere',
-                            field: 'Genere',
-                            lookup: { 1: 'Biography', 2: 'Drama', 3: 'Story' },
-                        },
-                        ]}
-                        data={[
-                        { Title: <><Avatar><PersonPinIcon /></Avatar>The Red Sari</>, Author: 'Javier Moro', IBSN_Number: 1122, Price: 123,Language:1,Genere:2 },
-                        { Title: <><Avatar><PersonPinIcon /></Avatar>Freedom in Exile</>, Author: 'Dalai Lama', IBSN_Number: 1212, Price: 163,Language:2,Genere:1 },
-                        { Title: <><Avatar><PersonPinIcon /></Avatar>Farishta</>, Author: 'Kapil Isapuari ', IBSN_Number: 2345, Price: 623,Language:3,Genere:1 },
-                        { Title: <><Avatar><PersonPinIcon /></Avatar>Super Economies</>, Author: 'Raghav Bahal', IBSN_Number: 2323, Price: 613,Language:1,Genere:2 },
-                        { Title: <><Avatar><PersonPinIcon /></Avatar>True Colours</>, Author: 'Adam Gilchrist', IBSN_Number: 1127, Price: 632,Language:1,Genere:2 },
-                        { Title: <><Avatar><PersonPinIcon /></Avatar>Lowland</>, Author: 'Jhumpa Lahiri', IBSN_Number: 3456, Price: 613,Language:1,Genere:1 },
-                        { Title: <><Avatar><PersonPinIcon /></Avatar>India at Risk</>, Author: 'Jaswant Singh', IBSN_Number: 1987, Price: 634,Language:2,Genere:2 },
-                        ]}
-                        actions={[
-                            {
-                                icon: CheckBoxIcon,
-                                onClick : () => {this.handleLogin()}
-                              },
-                            rowData => ({
-                                icon: DeleteOutline,
-                                tooltip: 'Delete User',
-                                onClick : () => {this.Sucess()}
-                            })
-                        ]}
-                        options={{
-                        actionsColumnIndex: -1
-                        }}
-                    />):
-                    ( (<center><Button style = {{margin:20}}
-                        variant="contained"
-                        color="secondary"
-                        size="small"
-                        startIcon={<CheckCircleOutlineIcon />}
-                        >
-                        {this.state.message}
-                      </Button></center>))
-                    }
-                    </Grid>
-              <Grid item xs/>
-              </Grid>
-              </Card>
-            </Paper>
-          </Grid>
-          <Grid item xs>
-          </Grid>
-        </Grid>
-        </div>
-    )
+    if(searchString == ''){
+      
+      BookService.GetBookInPage(sort,page)
+      .then((Response) => {
+        setCount (Response.data.Total_No_Of_Elements)
+        setBooks ( Response.data.data)
+    })
+    }else{
+      BookService.GetSearchedBooks(0,searchString,sort)
+      .then((Response) => {
+        setCount (Response.data.Total_No_Of_Elements)
+        console.log(count)
+        setBooks( Response.data.data)
+    })
   }
 }
-export default BookList
+
+
+    useEffect(() => {
+      let sort = "DESC"
+      if(priceADC){
+        sort = "ASC"
+      }
+      BookService.GetBookInPage(sort,page)
+        .then((Response) => {
+        console.log(Response.data.Total_No_Of_Elements)
+        setCount (Response.data.Total_No_Of_Elements)
+        setBooks ( Response.data.data)
+      })
+    },[]);
+
+
+    const handleChangePage = (event, newPage) => {
+      setPage(newPage);
+      let sort = "DESC"
+      if(priceADC){
+        sort = "ASC"
+      }
+      if(searchString == ''){
+        
+        BookService.GetBookInPage(sort,newPage)
+      .then((Response) => {
+        console.log(Response.data.Total_No_Of_Elements)
+        setCount (Response.data.Total_No_Of_Elements)
+        setBooks ( Response.data.data)
+      })
+    }else{
+      BookService.GetSearchedBooks(newPage,searchString,sort)
+      .then((Response) => {
+        console.log(Response.data.Total_No_Of_Elements)
+        setCount (Response.data.Total_No_Of_Elements)
+        setBooks ( Response.data.data)
+        
+      })
+    }
+      
+      
+      
+    };
+  
+    const handleChangeRowsPerPage = (event) => {
+      setRowsPerPage(parseInt(event.target.value, 10));
+      setPage(0);
+    };
+   
+    // const localStorageEditSave = (updateId) => {
+    //   localStorage.setItem('bookId',updateId)
+    //   console.log(updateId)
+    //   props.history.push("/edit")
+    // }
+
+    const clearText = (e) => {
+        setSearchString ('')
+        let sort = "DESC"
+        if(priceADC){
+          sort = "ASC"
+        }
+        BookService.GetBookInPage(sort,page)
+        .then((Response) => {
+        console.log(Response.data.Total_No_Of_Elements)
+        setCount (Response.data.Total_No_Of_Elements)
+        setBooks ( Response.data.data)
+        setPage(0);  
+      })
+    }
+
+    const priceASDChange = (e) => {
+      setPriceADC(!priceADC)
+      serachData()
+    }
+  
+  return (
+    <>
+    <Snackbar open={snackbaropen} autoHideDuration={4000} anchorOrigin={{ vertical,horizontal }} key={vertical + horizontal}>
+                <Alert variant="filled" severity="error">
+                  {message}
+                </Alert>
+    </Snackbar>
+      <div >
+    <Grid className={classes.grid} style = {{backgroundColor:"#263238"}}>
+      <Paper className = {classes.paper}>
+     
+        <div className={classes.search} style = {{margin:20}}>
+        <span style = {{fontSize:25}}><ListAltIcon fontSize = "medium"/>Book List</span> 
+            <div className={classes.searchIcon} style = {{float: 'right'}}>
+
+              <TextField
+        id="input-with-icon-textfield"
+        label="Search"
+        value = {searchString}
+        onChange = {searchChange}
+        
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <IconButton onClick = {() => serachData()}>
+                <SearchIcon/>
+              </IconButton>
+            </InputAdornment>
+          ),
+          endAdornment : (
+            <InputAdornment position="end">
+              <IconButton onClick = {() => clearText()}>
+                <ClearIcon/>
+              </IconButton>
+            </InputAdornment>
+          )
+        }}
+      />
+      
+            </div>
+        </div>
+        <TableContainer>
+      <Table className={classes.table} size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell align="left"><b>Title</b></TableCell>
+            <TableCell align="left"><b>Author</b></TableCell>
+            <TableCell align="left"><b>URL</b></TableCell>
+            <TableCell align="left"><b>ISBN</b></TableCell>
+            <TableCell align="left"><b>Price{priceADC ? (<IconButton onClick = {() => priceASDChange()}><ArrowUpwardIcon/></IconButton>):(<IconButton onClick = {() => priceASDChange()}><ArrowDownwardIcon/></IconButton>)}</b></TableCell>
+            <TableCell align="left"><b>Language</b></TableCell>
+            <TableCell align="left"><b>Genere</b></TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+
+          {books.map((row) => (
+            <TableRow>
+              <TableCell align="left"><><Avatar><PersonPinIcon /></Avatar>{row.title}</></TableCell>
+              <TableCell align="left">{row.author}</TableCell>
+              <TableCell align="left">{row.url}</TableCell>
+              <TableCell align="left">{row.isbNumber}</TableCell>
+              <TableCell align="left">{row.price}</TableCell>
+              <TableCell align="left">{row.language}</TableCell>
+              <TableCell align="left">{row.genere}</TableCell>
+              <TableCell>
+              <IconButton
+              onClick={() => deleteBook(row.id)}
+              //onClick = {() => deleteBook(row.id)}
+              // onClick = {() => window.location.reload()}
+              >
+              
+              <DeleteIcon
+                color="default"
+                align="left"
+                inputProps={{ 'aria-label': 'DeleteIcon with default color' }}
+              />
+              </IconButton>
+
+
+              <Link to={`/edit_book/${row.id}`}>
+              <IconButton 
+              // onClick = {() => localStorageEditSave(row.id)}
+              >
+                <EditIcon
+                color="default"
+                align="left"
+                inputProps={{ 'aria-label': 'DeleteIcon with default color' }}
+              />
+              </IconButton>
+              </Link>
+              </TableCell>
+            </TableRow>
+          ))}
+          
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TablePagination
+              rowsPerPageOptions={5}
+              // colSpan={3}
+              count={count}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              
+              // SelectProps={{
+              //   inputProps: { 'aria-label': 'rows per page' },
+              //   native: true,
+              // }}
+              onChangePage={handleChangePage}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+              ActionsComponent={TablePaginationActions}
+            />
+            
+          </TableRow>
+        </TableFooter>
+      </Table>
+    </TableContainer>
+      </Paper>
+    </Grid>
+    </div>
+    </>
+  );
+}

@@ -14,7 +14,11 @@ import ListIcon from '@material-ui/icons/List';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import BookList from './BookList';
+import Alert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
+import BookService from './BookService';
 
 
 
@@ -66,29 +70,155 @@ const theme = createMuiTheme({
       this.state = {
         message : '',
         successful : true,
+        title:'',
+        author:'',
+        url:'',
+        isbn:'',
+        price:'',
+        language:'',
+        genere:'',
+        vertical : 'top',
+        horizontal : 'center',
+        isSucess : false,
       }
     }
     handleLogin = (e) => {
       this.props.history.push('/book_list');
       window.location.reload();
     }
+    fillAlert = () => {
+      this.setState({snackbaropen:false})
+      if(this.state.isSucess){
+        this.props.history.push("/admin");
+      }
+    }
+    
       Booksave = (e) => {
         e.preventDefault();
-        this.setState({
-          successful: false,
-          message: "Sucess- Book Saved Sucessfully"
-        })
+
+        let book = {
+          title:this.state.title,
+          author:this.state.author,
+          url:this.state.url,
+          isbNumber:this.state.isbn,
+          price:this.state.price,
+	        language:this.state.language,
+	        genere:this.state.genere
+        }
+        if(this.state.title.length>4 && this.state.title.length>3 && this.state.url.length>5 
+          && this.state.isbn.length>5 && this.state.price.length>2 && this.state.language && this.state.genere){
+        BookService.AddBook(book)
+        .then((Response)=>{
+            this.setState({snackbaropen:true,isSucess:true, message:'Book Added Successfully'})
+            setTimeout(()=> this.fillAlert(), 3000)
+          })
+          .catch((error)=>{
+            this.setState({snackbaropen:true, message:'Please Fill the Form Correctly'})
+            setTimeout(()=> this.fillAlert(), 3000)
+          })
+        }else{
+          this.setState({snackbaropen:true, message:'Please Fill the Form Correctly'})
+          // setTimeout(()=> this.fillAlert(), 3000)
+        }
       }
       Bookupdate = (e) => {
         e.preventDefault();
+        let book = {
+          title:this.state.title,
+          author:this.state.author,
+          url:this.state.url,
+          isbNumber:this.state.url,
+          price:this.state.price,
+	        language:this.state.language,
+	        genere:this.state.genere
+        }
+        if(this.state.title.length>4 && this.state.title.length>3 && this.state.url.length>5 
+          && this.state.isbn.length>5 && this.state.price.length>2 && this.state.language && this.state.genere){
+          BookService.UpdateBook(this.props.match.params.id,book)
+          .then((Response)=>{
+            this.setState({snackbaropen:true,isSucess:true, message:'Book Update Successfully'})
+              setTimeout(()=> this.fillAlert(), 3000)
+          })
+          .catch((error)=>{
+            this.setState({snackbaropen:true, message:'Please Fill the Form Correctly'})
+            setTimeout(()=> this.fillAlert(), 3000)
+          })
+        }else{
+          this.setState({snackbaropen:true, message:'Please Fill the Form Correctly'})
+          // setTimeout(()=> this.fillAlert(), 3000)
+        }
+      }
+
+      onChange=(e)=>{
+        e.preventDefault();
         this.setState({
-          successful: false,
-          message: "Sucess- Book Update Sucessfully"
+          [e.target.name] : e.target.value
         })
       }
+
+    componentDidMount(){
+      if(this.props.match.params.id){
+        BookService.GetById(this.props.match.params.id)
+        .then((Response)=>{
+          this.setState({
+            title:Response.data.title,
+            author:Response.data.author,
+            url:Response.data.url,
+            isbn:Response.data.isbNumber,
+            price:Response.data.price,
+            language:Response.data.language,
+            genere:Response.data.genere,
+          })
+        })
+      }
+
+      ValidatorForm.addValidationRule('isTitle',(value) => {
+        if((this.state.title.length>4)){
+        return true;
+        }
+        return false;
+        })
+      ValidatorForm.addValidationRule('isAuthor',(value) => {
+        if((this.state.title.length>3)){
+        return true;
+        }
+        return false;
+        })
+      ValidatorForm.addValidationRule('isUrl',(value) => {
+        if((this.state.url.length>5)){
+        return true;
+        }
+        return false;
+        })
+      ValidatorForm.addValidationRule('isIsbn',(value) => {
+        if((this.state.isbn.length>5)){
+        return true;
+        }
+        return false;
+        })
+      ValidatorForm.addValidationRule('isPrice',(value) => {
+        if((this.state.price.length>2)){
+        return true;
+        }
+        return false;
+        })
+    }
     render(){
+      const { vertical, horizontal } = this.state;
     return (
       <div className={classes.root}  style={{ padding: 10 }}>
+        <Snackbar open={this.state.snackbaropen} autoHideDuration={4000} anchorOrigin={{ vertical,horizontal }} key={vertical + horizontal}>
+              { this.state.isSucess ? (
+                <Alert variant="filled" severity="success">
+                  {this.state.message}
+                </Alert>
+              ):(
+                <Alert variant="filled" severity="error">
+                {this.state.message}
+              </Alert>
+              )
+              }
+            </Snackbar>
         <Grid container spacing={1} >
           <Grid item xs>
           </Grid>
@@ -102,80 +232,104 @@ const theme = createMuiTheme({
                   <Card style = {{margin:5}}>
                 {this.state.successful ?
                 (<div style = {{marginLeft: 40}}>
-                  <form style = {{color : "black"},{marginLeft: 15}}>
-                  { localStorage.getItem('isLogin') ? 
+                  <ValidatorForm noValidate autoComplete="off" style={{width:'100%',color : "black",marginLeft: 15,padding:10}}>
+                  { this.props.match.params.id ? 
                   (<h3 style = {{color: 'black'}}> <CheckBoxIcon fontSize = "small"/>  Update Book </h3>):
                   (<h3 style = {{color: 'black'}}> <AddBoxIcon fontSize = "small"/>  Add New Book</h3> )
                   }
                           <FormControl>
-                            <TextField style  ={{width : "150%"}}
-                            required
+                            <TextValidator 
+                            required='true' 
+                            label="Title" 
+                            variant="outlined" 
+                            name = "title"
+                            helperText="Enter Title" 
+                            validators={['required',"isTitle"]}
+                            onChange={this.onChange} 
+                            value={this.state.title}
+                            errorMessages = {["This field is not Empty","Title must be more than 4 characters"]}
                             size="small"
-                            id="Title"
-                            label="Title"
-                            defaultValue=""
-                            helperText="Enter Book Title"
-                            variant="outlined"
+                            style = {{width: 300}}
                             />
                           </FormControl>
-                          &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+                          &emsp;&emsp;&emsp;
                           <FormControl>
-                              <TextField style  ={{width : "150%"}}
-                              required
-                              size="small"
-                              id="Author"
-                              label="Author"
-                              defaultValue=""
-                              helperText="Enter Book Author"
-                              variant="outlined"
-                              />
+                          <TextValidator 
+                            required='true' 
+                            label="Author" 
+                            variant="outlined" 
+                            name = "author"
+                            helperText="Enter Author Name" 
+                            validators={['required',"isAuthor"]}
+                            onChange={this.onChange} 
+                            value={this.state.author}
+                            errorMessages = {["This field is not Empty","Author must be more than 3 characters"]}
+                            size="small"
+                            style = {{width: 300}}
+                            />
                           </FormControl>
                           <br/>
                           <FormControl>
-                              <TextField style  ={{width : "150%"}}
+                            <TextValidator 
+                              required='true' 
+                              label="Cover Photo URL" 
+                              variant="outlined" 
+                              name = "url"
+                              helperText="Enter Cover Photo URL" 
+                              validators={['required',"isUrl"]}
+                              onChange={this.onChange} 
+                              value={this.state.url}
+                              errorMessages = {["This field is not Empty","URL must be more than 5 characters"]}
                               size="small"
-                              required
-                              id="cover_photo_url"
-                              label="Cover Photo URL"
-                              defaultValue=""
-                              helperText="Cover Photo URL"
-                              variant="outlined"
+                              style = {{width: 300}}
                               />
                           </FormControl>
-                          &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+                          &emsp;&emsp;&emsp;
                           <FormControl>
-                              <TextField style  ={{width : "150%"}}
-                              size="small"
-                              required
-                              id="ISBN_Number"
-                              label="ISBN Number"
-                              defaultValue=""
-                              helperText="Enter Book ISBN Number"
-                              variant="outlined"
-                              />
+                            <TextValidator 
+                                required='true' 
+                                label="ISBN Number" 
+                                type = "number"
+                                variant="outlined" 
+                                name = "isbn"
+                                helperText="Enter Cover Photo URL" 
+                                validators={['required',"isIsbn"]}
+                                onChange={this.onChange} 
+                                value={this.state.isbn}
+                                errorMessages = {["This field is not Empty","ISBN must be more than 5 Number"]}
+                                size="small"
+                                style = {{width: 300}}
+                                />
                           </FormControl>
                           <br/>
                           <FormControl>
-                              <TextField
-                              size="small"
-                              required
-                              id="Price"
-                              label="Price"
-                              defaultValue=""
-                              helperText="Enter Book Price"
-                              variant="outlined"
-                              />
+                          <TextValidator 
+                                required='true' 
+                                label="Price" 
+                                type = "number"
+                                variant="outlined" 
+                                name = "price"
+                                helperText="Enter Price" 
+                                validators={['required',"isPrice"]}
+                                onChange={this.onChange} 
+                                value={this.state.price}
+                                errorMessages = {["This field is not Empty","Price must be more than 2 Number"]}
+                                size="small"
+                                style = {{width: 300}}
+                                />
                           </FormControl>
                           &emsp;&emsp;
                           <FormControl size="small">
-                              <InputLabel >Name</InputLabel>
+                              <InputLabel >language</InputLabel>
                               <NativeSelect
+                              value = {this.state.language}
+                              onChange={this.onChange}
                               inputProps={{
-                                  name: 'Language',
-                                  id: 'Language',
+                                  name: 'language',
+                                  id: 'language',
                               }}
                               >
-                              <option value={"Select Language"}>Select Language</option>
+                              <option value={""}>Select Language</option>
                               <option value={"Tamil"}>Tamil</option>
                               <option value={"English"}>English</option>
                               <option value={"Sinhala"}>Sinhala</option>
@@ -186,12 +340,14 @@ const theme = createMuiTheme({
                           <FormControl size="small">
                           <InputLabel >Name</InputLabel>
                           <NativeSelect
+                          value = {this.state.genere}
+                          onChange={this.onChange}
                           inputProps={{
-                              name: 'Genre',
-                              id: 'Genre',
+                              name: 'genere',
+                              id: 'genere',
                           }}
                           >
-                          <option value={"Select Genere"}>Select Language</option>
+                          <option value={""}>Select Language</option>
                           <option value={"Bio"}>Biography</option>
                           <option value={"Story"}>Story</option>
                           <option value={"Drama"}>Drama</option>
@@ -200,7 +356,39 @@ const theme = createMuiTheme({
                           </FormControl>
                       <br/>
                       <MuiThemeProvider theme={theme}>
-                      <Button style={{float: 'right'}}
+                      <div style = {{float:"right"}}>
+                    { this.props.match.params.id ? 
+                    (<Button
+                    variant="contained"
+                    color="secondary"
+                    size="small"
+                    startIcon={<SaveIcon />}
+                    onClick = {this.Bookupdate}
+                    >
+                    Update
+                  </Button>):
+                      (<Button
+                          variant="contained"
+                          color="secondary"
+                          size="small"
+                          startIcon={<SaveIcon />}
+                          onClick = {this.Booksave}
+                          >
+                          Save
+                      </Button>)
+                      
+                    }
+                     &emsp;
+                      <Button
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          startIcon={<RotateLeftIcon />}
+                          >
+                          Reset
+                      </Button>
+                      &emsp;
+                     <Button
                           variant="contained"
                           color="primary"
                           size="small"
@@ -210,37 +398,9 @@ const theme = createMuiTheme({
                           Book List
                       </Button>
                       &emsp;&emsp;
-                      <Button style={{float: 'right'}}
-                          variant="contained"
-                          color="primary"
-                          size="small"
-                          startIcon={<RotateLeftIcon />}
-                          >
-                          Reset
-                      </Button>
-                      &emsp;&emsp;
-                    { localStorage.getItem('isLogin') ? 
-                      (<Button style={{float: 'right'}}
-                          variant="contained"
-                          color="secondary"
-                          size="small"
-                          startIcon={<SaveIcon />}
-                          onClick = {this.Booksave}
-                          >
-                          Save
-                      </Button>):
-                      (<Button style={{float: 'right'}}
-                        variant="contained"
-                        color="secondary"
-                        size="small"
-                        startIcon={<SaveIcon />}
-                        onClick = {this.Bookupdate}
-                        >
-                        Update
-                      </Button>)
-                    }
+                      </div>
                       </MuiThemeProvider>
-                  </form>
+                  </ValidatorForm>
                 </div>):
                   (<center><Button style = {{margin:20}}
                   variant="contained"

@@ -2,6 +2,9 @@ import React, {Component,useState} from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { Card, CardContent, Typography, Grid, FormControl, TextField } from '@material-ui/core';
+import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
+import AuthService from './AuthService';
+
 
 
 
@@ -22,7 +25,7 @@ const classes = makeStyles((theme) => ({
       minWidth: 275,
       backgroundColor:'#263238',
       marginTop: 20,
-      
+      padding:20,
       color: 'white'
     },
     title: {
@@ -46,58 +49,60 @@ const classes = makeStyles((theme) => ({
         username: "",
         email: "",
         password: "",
-        userMessage: "",
-        passMessage: "",
         successful: false,
       }
+    }
+    componentDidMount(){
+      ValidatorForm.addValidationRule('isUserName',(value) => {
+        if((this.state.username.length>4)){
+        return true;
+        }
+        return false;
+        })
+    
+    ValidatorForm.addValidationRule('isPassword',(value) => {
+        if((this.state.password.length>=8) && (this.state.password.length<=16)){
+        return true;
+        }
+        return false;
+        })
     }
     onChangeUsername = (e) => {
       this.setState({
         username: e.target.value
       });
-      if(this.state.username.length <= 0){
-        this.setState({
-          userMessage: "This Field is Required"
-        })
-        e.helperText = this.state.userMessage
-      }
-      else{
-        this.setState({
-          userMessage: ""
-        })
-        e.helperText = this.state.userMessage
-      }
     }
   
     onChangePassword = (e) => {
       this.setState({
         password: e.target.value
       });
-      if(this.state.password.length <= 0){
-        this.setState({
-          passMessage: "This Field is Required"
-        })
-        e.helperText = this.state.passMessage
-      }
-      else{
-        this.setState({
-          passMessage: ""
-        })
-        e.helperText = this.state.passMessage
-      }
     }
   
       handleLogin = (e) => {
         e.preventDefault()
         if (this.state.username && this.state.password) {
-              console.log("username = " + this.state.username)
-              console.log("password = " + this.state.password)
-              localStorage.setItem('id', '1');
-              localStorage.setItem('username', this.state.username);
-              localStorage.setItem('email', 'Rajinthan@gmail.com');
-              localStorage.setItem('roles', 'user'); //Please change role as ADMIN to check Admin
-              this.props.history.push("/profile");
-              window.location.reload();
+              // console.log("username = " + this.state.username)
+              // console.log("password = " + this.state.password)
+              // localStorage.setItem('id', '1');
+              // localStorage.setItem('username', this.state.username);
+              // localStorage.setItem('email', 'Rajinthan@gmail.com');
+              // localStorage.setItem('roles', 'ADMIN'); //Please change role as ADMIN to check Admin
+              let user = {
+                username : this.state.username,
+                password : this.state.password
+              }
+              AuthService.login(user)
+              .then((Response)=> {
+                console.log(Response)
+                localStorage.setItem('id', Response.data.id);
+                localStorage.setItem('username', Response.data.username);
+                localStorage.setItem('email', Response.data.email);
+                localStorage.setItem('roles', Response.data.roles[0])
+                localStorage.setItem('token', Response.data.basicToken);
+                this.props.history.push("/profile");
+                window.location.reload();
+              })
         } 
       }
     render(){
@@ -106,48 +111,55 @@ const classes = makeStyles((theme) => ({
         <Grid container spacing={1} >
           <Grid item xs>
           </Grid>
-          <Grid item xs = {3}>
+          <Grid item xs = {4}>
           <Paper>
               <Card style={style.root} variant="outlined">
               <Grid container spacing={1} >
               <Grid item xs/>
-                <Grid item xs = {10}>
+                <Grid item xs = {11}>
                 <div style = {{marginLeft: 40},{backgroundColor : "White"}}>
-                <form style = {{color : "black"},{marginLeft: 15}} onSubmit={this.handleLogin}>
+                <ValidatorForm noValidate autoComplete="off" style={{width:'100%',color : "black",marginLeft: 15,padding:10}}onSubmit={this.handleLogin}>
                   <h1 style = {{color: '#2979ff'}}>Login To Book Shop</h1>
                   <p>
                         <FormControl>
-                          <TextField
-
-                          id="userName"
-                          label="User Name"
-                          defaultValue=""
-                          variant="outlined"
-                          onChange = {this.onChangeUsername}
-                          onClick = {this.onChangeUsername}
-                          helperText={this.state.userMessage ? (<span style = {{color:"red"}}>{this.state.userMessage}</span>):("Enter Your User Name")}
-                          />
+                        <TextValidator 
+                            required='true' 
+                            label="Username" 
+                            variant="outlined" 
+                            helperText="Enter your username" 
+                            validators={['required',"isUserName"]}
+                            onChange={this.onChangeUsername} 
+                            value={this.state.username}
+                            errorMessages = {["This field is not Empty","Username must be more than 4 characters"]}
+                            size="small"
+                            style = {{width: "90%"}}
+                            />
                         </FormControl>
                         <FormControl>
-                        <TextField
-                        id="password"
-                        label="Password"
-                        type="password"
-                        defaultValue=""
-                        
-                        variant="outlined"
-                        onChange = {this.onChangePassword}
-                        onClick = {this.onChangePassword}
-                        helperText={this.state.passMessage ? (<span style = {{color:"red"}}>{this.state.passMessage}</span>):("Enter Your Password")}
-                        />
+                          <TextValidator 
+                            Required
+                            required='true' 
+                            label="Password" 
+                            type = 'password'
+                            variant="outlined" 
+                            helperText="Enter your Password" 
+                            validators={['required',"isPassword"]}
+                            errorMessages = {["This field is not Empty","Password must be between 8 & 16 characters"]}
+                            value = {this.state.password} 
+                            onChange = {this.onChangePassword} 
+                            size="small"
+                            style = {{width: "90%"}}
+                          />
+
                         </FormControl>
+                        <br/>
                         <FormControl>
                          <button>
                            <span>Login</span>
                          </button>
                        </FormControl>
                   </p>
-                </form>
+                </ValidatorForm>
                 </div>
                 </Grid>
               <Grid item xs/>

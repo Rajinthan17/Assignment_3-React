@@ -8,7 +8,8 @@ class App extends Component {
   constructor(props){
     super(props)
   }
-
+//If you want to see the Admin Board please go to login.js(Source Code) and change role as 'ADMIN'
+//If you want to see the Book Update please go to Book list in the UI and then click the icon near to the deleted icon
   render(){
     return (
       <div>

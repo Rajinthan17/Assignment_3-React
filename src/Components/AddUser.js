@@ -17,6 +17,10 @@ import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import BookList from './BookList';
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
+import Alert from '@material-ui/lab/Alert';
+import Snackbar from '@material-ui/core/Snackbar';
+import UserService from './UserService';
 
 
 
@@ -69,29 +73,152 @@ const theme = createMuiTheme({
       this.state = {
         message : '',
         successful : true,
+        username:"",
+        email:"",
+        password:"",
+        role:'',
+        vertical : 'top',
+        horizontal : 'center',
+        isSucess : false,
       }
     }
+
+    fillAlert = () => {
+      this.setState({snackbaropen:false})
+      if(this.state.isSucess){
+        this.props.history.push("/admin");
+      }
+    }
+    
+    componentDidMount(){
+      if(this.props.match.params.id){
+        UserService.GetById(this.props.match.params.id)
+        .then((Response)=>{
+          this.setState({
+            username:Response.data.username,
+            email:Response.data.email,
+            role:Response.data.roles[0].name,
+          })
+        })
+        .catch((error)=>{
+          this.setState({snackbaropen:true, message:'Somthing went wrong'})
+          setTimeout(()=> this.fillAlert(), 4000)
+        })
+      }
+
+      ValidatorForm.addValidationRule('isUserName',(value) => {
+        if((this.state.username.length>4)){
+        return true;
+        }
+        return false;
+        })
+      ValidatorForm.addValidationRule('isEmail',(value) => {
+        if(this.state.email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/) ){
+        return true;
+        }
+        return false;
+        })
+      ValidatorForm.addValidationRule('isPassword',(value) => {
+        if((this.state.password.length>=8) && (this.state.password.length<=16)){
+        return true;
+        }
+        return false;
+        })
+    }
+
     handleLogin = (e) => {
-      this.props.history.push('/book_list');
+      this.props.history.push('/view_user');
       window.location.reload();
-}
-      Booksave = (e) => {
-        e.preventDefault();
-        this.setState({
-          successful: false,
-          message: "Sucess- User Add Sucessfully"
-        })
+    }
+
+    Usersave = (e) => {
+      e.preventDefault();
+
+      let user = {
+        username:this.state.username,
+        email:this.state.email,
+        password:this.state.password,
+        roles: [this.state.role]
       }
-      Bookupdate = (e) => {
-        e.preventDefault();
-        this.setState({
-          successful: false,
-          message: "Sucess- User Update Sucessfully"
+      
+      if(this.state.username.length>4 && this.state.email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+      && this.state.password.length>=8 && this.state.password.length<=16 ){
+        UserService.createUser(user)
+        .then((Response)=>{
+          this.setState({snackbaropen:true,isSucess:true, message:'User Added Successfully'})
+              setTimeout(()=> this.fillAlert(), 3000)
         })
+        .catch((error)=>{
+          this.setState({snackbaropen:true, message:'Please Fill the Form Correctly'})
+          setTimeout(()=> this.fillAlert(), 4000)
+        })
+      }else{
+        this.setState({snackbaropen:true, message:'Please Fill the Form Correctly'})
+          setTimeout(()=> this.fillAlert(), 4000)
       }
+    }
+    Userupdate = (e) => {
+      e.preventDefault();
+      let user = {
+        username:this.state.username,
+        email:this.state.email,
+        updateroles: [this.state.role]
+      }
+      if(this.state.username.length>4 && this.state.email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
+      && this.state.password.length>=8 && this.state.password.length<=16 ){
+        UserService.UpdateUser(this.props.match.params.id,user)
+        .then((Response)=>{
+          this.setState({snackbaropen:true,isSucess:true, message:'User Update Successfully'})
+              setTimeout(()=> this.fillAlert(), 3000)
+        })
+        .catch((error)=>{
+          this.setState({snackbaropen:true, message:'Please Fill the Form Correctly'})
+          setTimeout(()=> this.fillAlert(), 4000)
+        })
+      }else{
+        this.setState({snackbaropen:true, message:'Please Fill the Form Correctly'})
+          setTimeout(()=> this.fillAlert(), 4000)
+      }
+    }
+    onChangeUsername = (e) => {
+      this.setState({
+        username: e.target.value
+      });
+    }
+
+    onChangeRole = (e) => {
+      this.setState({
+        role: e.target.value
+      });
+    }
+  
+    onChangeEmail = (e) => {
+      this.setState({
+        email: e.target.value
+      });
+    }
+  
+    onChangePassword = (e) => {
+      this.setState({
+        password: e.target.value
+      });
+    }
     render(){
+      const { vertical, horizontal } = this.state;
     return (
       <div className={classes.root}  style={{ padding: 10 }}>
+        <Snackbar open={this.state.snackbaropen} autoHideDuration={4000} anchorOrigin={{ vertical,horizontal }} key={vertical + horizontal}>
+              { this.state.isSucess ? (
+                <Alert variant="filled" severity="success">
+                  {this.state.message}
+                </Alert>
+              ):(
+                <Alert variant="filled" severity="error">
+                {this.state.message}
+              </Alert>
+              )
+              }
+            </Snackbar>
         <Grid container spacing={1} >
           <Grid item xs>
           </Grid>
@@ -105,68 +232,112 @@ const theme = createMuiTheme({
                   <Card style = {{margin:5}}>
                 {this.state.successful ?
                 (<div style = {{marginLeft: 40}}>
-                  <form style = {{color : "black"},{marginLeft: 15}}>
-                  { localStorage.getItem('isLogin2') ? 
+                  <ValidatorForm noValidate autoComplete="off" style={{width:'100%',color : "black",marginLeft: 15,padding:10}}>
+                  { this.props.match.params.id ? 
                   (<h3 style = {{color: 'black'}}> <CheckBoxIcon fontSize = "small"/>  Update User </h3>):
                   (<h3 style = {{color: 'black'}}> <AddBoxIcon fontSize = "small"/>  Add New User</h3> )
                   
                   }
                           <FormControl>
-                            <TextField style  ={{width : "150%"}}
-                            required
+                          <TextValidator 
+                            required='true' 
+                            label="Username" 
+                            variant="outlined" 
+                            helperText="Enter your username" 
+                            validators={['required',"isUserName"]}
+                            onChange={this.onChangeUsername} 
+                            value={this.state.username}
+                            errorMessages = {["This field is not Empty","Username must be more than 4 characters"]}
                             size="small"
-                            id="Username"
-                            label="Username"
-                            defaultValue=""
-                            helperText="Enter Username"
-                            variant="outlined"
+                            style = {{width: 300}}
                             />
                           </FormControl>
-                          &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+                          &emsp;&emsp;&emsp;
                           <FormControl>
-                              <TextField style  ={{width : "150%"}}
-                              required
+                            <TextValidator 
+                              required='true' 
+                              label="E-Mail" 
+                              variant="outlined" 
+                              helperText="Enter your email" 
+                              validators={['required',"isEmail"]}
+                              errorMessages = {["This field is not Empty","E-Mail must be in E-Mail format"]}
+                              value = {this.state.email} 
+                              onChange = {this.onChangeEmail} 
                               size="small"
-                              id="email"
-                              label="Email"
-                              defaultValue=""
-                              helperText="Enter Email Address"
-                              variant="outlined"
+                              style = {{width: 300}}
                               />
                           </FormControl>
                           <br/>
-                          <FormControl style  ={{width : "45%"}} >
+                          <FormControl style  ={{width : 300}} >
                               <InputLabel >Role</InputLabel>
                               <NativeSelect
                               inputProps={{
                                   name: 'Role',
                                   id: 'Role',
                               }}
+                              value = {this.state.role}
+                              onChange = {this.onChangeRole}
                               >
                               <option value={"Select Role"}>Select Role</option>
-                              <option value={"Admin"}>Admin</option>
-                              <option value={"User"}>User</option>
+                              <option value={"ROLE_ADMIN"}>Admin</option>
+                              <option value={"ROLE_USER"}>User</option>
                               </NativeSelect>
                               <FormHelperText>Please Select your Role</FormHelperText>
                           </FormControl>
-                          &emsp;&emsp;
-                          { !localStorage.getItem('isLogin2') ? (
+                          &emsp;&emsp;&emsp;
+                          { !this.props.match.params.id ? (
                           <FormControl>
-                              <TextField style  ={{width : "150%"}}
-                              required
-                              size="small"
-                              id="password"
-                              label="Password"
-                              type = "password"
-                              defaultValue=""
-                              helperText="Enter your password"
-                              variant="outlined"
-                              />
+                              <TextValidator 
+                                Required
+                                required='true' 
+                                label="Password" 
+                                type = 'password'
+                                variant="outlined" 
+                                helperText="Enter your Password" 
+                                validators={['required',"isPassword"]}
+                                errorMessages = {["This field is not Empty","Password must be between 8 & 16 characters"]}
+                                value = {this.state.password} 
+                                onChange = {this.onChangePassword} 
+                                size="small"
+                                style = {{width: 300}}
+                                />
                           </FormControl>
                           ):(null)}
                       <br/>
                       <MuiThemeProvider theme={theme}>
-                      <Button style={{float: 'right'}}
+                      <div style = {{float:"right"}}>
+                    { this.props.match.params.id ? 
+                      (<Button
+                        variant="contained"
+                        color="secondary"
+                        size="small"
+                        startIcon={<SaveIcon />}
+                        onClick = {this.Userupdate}
+                        >
+                        Update
+                      </Button>):
+                      (<Button
+                      variant="contained"
+                      color="secondary"
+                      size="small"
+                      startIcon={<SaveIcon />}
+                      onClick = {this.Usersave}
+                      >
+                      Save
+                  </Button>)
+                    }
+                    &emsp;
+                   
+                      <Button 
+                          variant="contained"
+                          color="primary"
+                          size="small"
+                          startIcon={<RotateLeftIcon />}
+                          >
+                          Reset
+                      </Button>
+                      &emsp;
+                    <Button
                           variant="contained"
                           color="primary"
                           size="small"
@@ -175,38 +346,11 @@ const theme = createMuiTheme({
                           >
                           User List
                       </Button>
+                      
                       &emsp;&emsp;
-                      <Button style={{float: 'right'}}
-                          variant="contained"
-                          color="primary"
-                          size="small"
-                          startIcon={<RotateLeftIcon />}
-                          >
-                          Reset
-                      </Button>
-                      &emsp;&emsp;
-                    { localStorage.getItem('isLogin2') ? 
-                      (<Button style={{float: 'right'}}
-                        variant="contained"
-                        color="secondary"
-                        size="small"
-                        startIcon={<SaveIcon />}
-                        onClick = {this.Bookupdate}
-                        >
-                        Update
-                      </Button>):
-                      (<Button style={{float: 'right'}}
-                      variant="contained"
-                      color="secondary"
-                      size="small"
-                      startIcon={<SaveIcon />}
-                      onClick = {this.Booksave}
-                      >
-                      Save
-                  </Button>)
-                    }
+                      </div>
                       </MuiThemeProvider>
-                  </form>
+                  </ValidatorForm>
                 </div>):
                   (<center><Button style = {{margin:20}}
                   variant="contained"

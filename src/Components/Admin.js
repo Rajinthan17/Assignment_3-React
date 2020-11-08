@@ -39,12 +39,21 @@ const classes = makeStyles((theme) => ({
       localStorage.removeItem("isLogin2");
       window.location.reload();
     }
+    BookAdd = (e) => {
+      this.props.history.push({pathname :'/add_book',customNameData: true})
+      localStorage.removeItem("isLogin2");
+      window.location.reload();
+    }
     UserUpdate = (e) => {
       this.props.history.push({pathname :'/add_user',customNameData: false});
       window.location.reload();
     }
     UserView = (e) => {
       this.props.history.push({pathname :'/view_user'});
+      window.location.reload();
+    }
+    BookView = (e) => {
+      this.props.history.push({pathname :'/book_list'});
       window.location.reload();
     }
     render(){
@@ -80,8 +89,8 @@ const classes = makeStyles((theme) => ({
                             </center>
                                 <br/>
                                 <p style = {{color: "white"}}>Manage Books</p>
-                                <button>Add Book</button>
-                                <button style={{ float: 'right' }}>View Books</button>
+                                <button onClick = {this.BookAdd}>Add Book</button>
+                                <button style={{ float: 'right' }} onClick = {this.BookView}>View Books</button>
                             </Paper> 
                         </Grid>
                     </Grid>
